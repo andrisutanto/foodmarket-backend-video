@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Actions\Fortify\PasswordValidationRules;
-use Exception;
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
