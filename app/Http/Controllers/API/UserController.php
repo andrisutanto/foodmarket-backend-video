@@ -15,7 +15,7 @@ use PhpParser\Node\Stmt\TryCatch;
 class UserController extends Controller
 {
 
-    use PasswordValidationRules
+    use PasswordValidationRules;
 
     public function login(Request $request)
     {
@@ -97,4 +97,11 @@ class UserController extends Controller
             ], 'Authentication Failed', 500);
         }
     }
+
+    public function logout(Request $request)
+    {
+        $token = $request->user()->currentAccessToken()->delete();
+        return ResponseFormatter::success($token, 'Token Revoked');
+    }
+
 }
