@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -104,6 +105,11 @@ class UserController extends Controller
         return ResponseFormatter::success($token, 'Token Revoked');
     }
 
+    public function fetch(Request $request)
+    {
+        return ResponseFormatter::success($request->user(),'Data Profile user berhasil diambil');
+    }
+
     public function updateProfile(Request $request)
     {
         $data = $request->all();
@@ -112,6 +118,36 @@ class UserController extends Controller
         $user->update($data);
 
         return ResponseFormatter::success($user, 'Profile Updated');
+    }
+
+    public function updatePhoto(Request $request)
+    {
+        //validasi foto profile yang diupload
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|image|max:2048'
+        ]);
+
+        //jika gagal, maka beri response error
+        if($validator->fails())
+        {
+            return ResponseFormatter::error(
+                ['error' => $validator->errors()],
+                'Update photo fails',
+                401
+            );
+        }
+
+        if($request->file('file'))
+        {
+            $file = $request->file->store('assets/user', 'public');
+
+            //simpan foto ke database (urlnya)
+            $user = Auth::user();
+            $user->profile_photo_path = $file;
+            $user->update();
+
+            return ResponseFormatter::success([$file], 'File successfully uploaded');
+        }
     }
 
 }
